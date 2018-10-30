@@ -1,23 +1,20 @@
 #include "network.h"
 #include "Constants.h"
 
-Network::Network(XBee xbeeNet,Serial serial ) {
+Network::Network(XBee xbeeNet, HardwareSerial* serial) {
     this->xbeeNet=xbeeNet;
     this->serial=serial;
 }
 
 
 void  Network::writeToSerial(uint8_t* str){
-    serial.println(str);
+    (*serial).println((char*)str);
 }
 
 
-XBeeResponse& reciveXbee (int timeout){
-    XBeeResponse& res;
-
-    if (xbeeNet.readPacket(timeout)){  // got a response!
-       res=xbeeNet.getResponse();
-       return res;
+XBeeResponse* Network::reciveXbee (int timeout){
+     if (xbeeNet.readPacket(timeout)){  // got a response!
+       return &xbeeNet.getResponse();
     }
     return NULL;
 }
@@ -70,4 +67,3 @@ void Network::writeXbee(uint16_t dest, uint8_t TypeNumber, uint8_t* data, int da
     xbeeNet.send(tx);
 }
 
-bool Network::write(uint8_t* msg, int msg_size);
